@@ -9,10 +9,6 @@ import (
 )
 
 func GenerateConfigFrom(cfg config.Config) (*dsl.Config, error) {
-	if err := cfg.Check(); err != nil {
-		return nil, fmt.Errorf("config check: %w", err)
-	}
-
 	client := dsl.ClientType(cfg.TargetClient)
 	if !client.IsValid() {
 		return nil, fmt.Errorf("invalid client type: %s: alloweds: %s", client, GetSupportedClients())

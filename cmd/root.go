@@ -18,6 +18,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/Dentrax/xdsl-exporter/internal/rtop"
 	"net/http"
 	"os"
 	"os/signal"
@@ -44,9 +45,10 @@ var (
 	cfg     = config.Config{}
 	cfgFile string
 	cmd     = &cobra.Command{
-		Use:          "xdsl-exporter",
-		Short:        "A Prometheus Exporter for your rusty xDSL Modem",
-		SilenceUsage: true,
+		Use:           "xdsl-exporter",
+		Short:         "A Prometheus Exporter for your rusty xDSL Modem",
+		SilenceUsage:  true,
+		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return run()
 		},
@@ -67,6 +69,7 @@ func init() {
 	cmd.PersistentFlags().StringVar(&cfg.MetricsPath, "metrics-path", "/metrics", "Path under which to expose metrics.")
 	cmd.PersistentFlags().StringVar(&cfg.KnownHostsPath, "known-hosts-path", "~/.ssh/known_hosts", "Path to your known_hosts file.")
 	cmd.PersistentFlags().StringVar(&cfg.TargetHost, "target-host", "192.168.1.1", "Hostname or IP address of the target xDSL Modem")
+	cmd.PersistentFlags().IntVar(&cfg.TargetPort, "target-port", 22, "Port of the target xDSL Modem")
 	cmd.PersistentFlags().StringVar(&cfg.TargetUser, "target-user", "admin", "Host user")
 	cmd.PersistentFlags().StringVar(&cfg.TargetPassword, "target-password", "", "Host password")
 	cmd.PersistentFlags().StringVar(&cfg.TargetSSHKeyPath, "target-ssh-key-path", "", "Path to the SSH key to use for authentication")
@@ -101,12 +104,21 @@ func run() error {
 
 	prometheus.MustRegister(version.NewCollector("xdsl_exporter"))
 
+	if err := cfg.Check(); err != nil {
+		return fmt.Errorf("config check: %w", err)
+	}
+
 	dslClient, err := dsl.New(cfg)
 	if err != nil {
 		return err
 	}
 
-	exporter := exporter.New(dslClient, logger)
+	rtopClient, err := rtop.New(cfg)
+	if err != nil {
+		return err
+	}
+
+	exporter := exporter.New(dslClient, rtopClient, logger)
 	prometheus.MustRegister(exporter)
 
 	http.Handle(cfg.MetricsPath, promhttp.Handler())

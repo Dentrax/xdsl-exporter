@@ -13,6 +13,7 @@ type Config struct {
 	MetricsPath         string
 	KnownHostsPath      string
 	TargetHost          string
+	TargetPort          int
 	TargetUser          string
 	TargetPassword      string
 	TargetSSHKeyPath    string
