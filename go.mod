@@ -14,7 +14,7 @@ require (
 	github.com/spf13/viper v1.12.0
 )
 
-replace github.com/rapidloop/rtop => /Users/furkan.turkal/go/src/rtop
+replace github.com/rapidloop/rtop => github.com/Dentrax/rtop v0.0.0-20220903202932-65d9232dd7e9
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
