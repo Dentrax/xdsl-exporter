@@ -8,6 +8,8 @@
 
 <br />
 
+**ARTICLE:** [How to monitor an xDSL Modem using a Prometheus Exporter plugin and Grafana Agent on Grafana Cloud with Grafana OnCall](https://grafana.com/blog/2023/03/17/how-to-monitor-an-xdsl-modem-using-a-prometheus-exporter-plugin-and-grafana-agent-on-grafana-cloud-with-grafana-oncall/?mdm=github)
+
 ## Overview
 
 ![Overview](.res/grafana.png)
